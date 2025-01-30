@@ -1,0 +1,9 @@
+[package]
+name = "Gerenciador-de-senhas"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rocket = "0.5.1"
+simple-log = "2.1.1"
+log = "0.4.20"
