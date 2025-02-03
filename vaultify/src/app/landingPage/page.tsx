@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function LandingPage() {
   return (
@@ -37,9 +38,9 @@ export default function LandingPage() {
         </p>
 
         {/* Login Button */}
-        <button className="rounded-full bg-white px-20 py-3 font-medium text-slate-800 shadow-lg transition-colors duration-200 hover:bg-teal-50 hover:shadow-xl hover:shadow-teal-500/20">
+        <Link className="rounded-full bg-white px-20 py-3 font-medium text-slate-800 shadow-lg transition-colors duration-200 hover:bg-teal-50 hover:shadow-xl hover:shadow-teal-500/20" href={"/login"}>
           Fazer Login
-        </button>
+        </Link>
       </div>
     </div>
   );
