@@ -1,18 +1,13 @@
 [package]
-name = "Gerenciador-de-senhas"
+name = "ultimo-teste"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rocket = "0.5.1"
-simple-log = "2.1.1"
-log = "0.4.20"
-diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35"] }
-# build libsqlite3 as part of the build process
-# uncomment this line if you run into setup issues
-# libsqlite3-sys = { version = "0.30", features = ["bundled"] }
+rocket = { version = "0.5.1", features = ["json"] }
+diesel = { version = "2.1.0", features = ["sqlite", "r2d2"] }
+rand = "0.8"
+argon2 = "0.5"
+serde = { version = "1.0", features = ["derive"] }
 dotenvy = "0.15"
 
-[dependencies.rocket_sync_db_pools]
-version = "0.1.0"
-features = ["diesel_sqlite_pool"]
