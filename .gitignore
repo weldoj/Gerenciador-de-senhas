@@ -1,1 +1,7 @@
 target/
+*.db-shm
+vaultify/public/*.png
+vaultify/public/*.webp
+vaultify/public/*.ico
+vaultify/pnpm-lock.yaml
+Cargo.lock
