@@ -5,3 +5,5 @@ vaultify/public/*.webp
 vaultify/public/*.ico
 vaultify/pnpm-lock.yaml
 Cargo.lock
+cargo.log
+.env
