@@ -5,6 +5,7 @@ mod auth;
 mod routes;
 mod models;
 mod schema;
+mod password;
 
 use db::establish_connection;
 
@@ -14,6 +15,11 @@ fn rocket() -> _ {
 
     rocket::build()
         .manage(pool)
-        .mount("/api", routes![routes::register, routes::login, routes::ativar_2fa])
+        .mount("/api", routes![
+            routes::register,
+            routes::login,
+            routes::ativar_2fa,
+            routes::add_password,
+        ])
 }
 

@@ -1,6 +1,8 @@
 use crate::auth::{hash_senha, verificar_senha, gerar_qr_code_2fa};
+use crate::password::generate_strong_password;
 use crate::db::DbPool;
-use crate::models::{NewUser, User, LoginUser, Ativar2FARequest};
+use crate::models::{NewUser, User, LoginUser, Ativar2FARequest, AddPasswordRequest};
+use crate::schema::passwords::{url_image, url_servico};
 use diesel::prelude::*;
 use rocket::{post, State};
 use rocket::serde::json::Json;
@@ -104,6 +106,7 @@ pub fn ativar_2fa(data: Json<Ativar2FARequest>, pool: &State<DbPool>) -> Result<
 
     let usuario = users
         .filter(username.eq(&data.username))
+        .select(User::as_select())
         .first::<User>(conn)
         .map_err(|_| "Usuário não encontrado".to_string())?;
 
@@ -113,4 +116,49 @@ pub fn ativar_2fa(data: Json<Ativar2FARequest>, pool: &State<DbPool>) -> Result<
     let qr_code_path = gerar_qr_code_2fa(&usuario.username, &chave_secreta);
 
     Ok(Json(format!("QR Code salvo em: {}", qr_code_path)))
+}
+
+#[post("/add-password", data = "<password_data>")]
+pub fn add_password(password_data: Json<AddPasswordRequest>, pool: &State<DbPool>) -> Result<Json<String>, String> {
+    let conn = &mut pool.get().map_err(|_| "Erro ao obter conexão".to_string())?;
+
+     // Verifica se senha_size é inválido
+    let senha_size = password_data.senha_size.unwrap_or(16);
+    if senha_size <= 0 {
+        return Err("O tamanho da senha deve ser maior que zero".to_string());
+    }
+
+    // Determine the password
+    let final_password = match &password_data.senha {
+        Some(senha) => Some(senha.clone()),  // Ensure senha is wrapped in Some()
+        None => {
+            // Convert i32 to u32 safely, defaulting to 16 if negative or None
+            let length: u32 = password_data.senha_size.map_or(16, |size| size.max(0) as u32);
+            Some(generate_strong_password(length))  // Wrap the generated password in Some()
+        }
+    };
+    
+
+    let new_password = AddPasswordRequest {
+        nome_servico: password_data.nome_servico.clone(),
+        url_servico: password_data.url_servico.clone(),
+        email: password_data.email.clone(),
+        url_image: password_data.url_image.clone(),
+        senha_size: password_data.senha_size,
+        senha: final_password.clone(),  // final_password is already an Option<String>
+    };
+
+    // Insert into database
+    diesel::insert_into(crate::schema::passwords::table)
+        .values(&new_password)
+        .execute(conn)
+        .map_err(|_| "Erro ao salvar senha".to_string())?;
+
+    // Include the password in the response for visibility
+    let response_message = match &final_password {
+        Some(pwd) => format!("Senha salva com sucesso! Senha: {}", pwd),
+        None => "Senha salva com sucesso!".to_string(),
+    };
+
+    Ok(Json(response_message))
 }
