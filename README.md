@@ -7,9 +7,9 @@
 **Integrantes:**
 * Gabriel 
 * Laryssa de Oliveira Ferreira - 222005386
-* Weldo Ginçalves da Silva Junior - 222014133
+* Weldo Gonçalves da Silva Junior - 222014133
 * Victor
-* Luis
+* Luis Gustavo de Sousa Silva - 200046527
 
 **Semestre:** 2024/2
 
