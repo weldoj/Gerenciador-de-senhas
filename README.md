@@ -5,7 +5,7 @@
 **Professor:** [Marcelo Ladeira](https://buscatextual.cnpq.br/buscatextual/visualizacv.do)
 
 **Integrantes:**
-* Gabriel 
+* Gabriel Ribeiro da Silva - 222005401
 * Laryssa de Oliveira Ferreira - 222005386
 * Weldo Gonçalves da Silva Junior - 222014133
 * Victor
