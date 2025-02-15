@@ -6,7 +6,7 @@ import { Sidebar } from "../sidebar"
 
 interface AppLayoutProps {
   children: ReactNode
-  activeItem?: "passwords" | "categories"
+  activeItem?: "passwords" 
 }
 
 export function AppLayout({ children, activeItem }: AppLayoutProps) {

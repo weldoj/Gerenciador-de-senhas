@@ -22,7 +22,7 @@ export function Sidebar({ isOpen, activeItem }: SidebarProps) {
           <Image src={"/Locker.png"} alt={"chave"} width={40} height={40}/>
           <span className="text-black text-sm">Minhas senhas</span>
         </Link>
-        <Link
+        {/* <Link
           href="/categorias"
           className={`flex items-center flex-col space-x-2 p-2 text-white rounded-lg ${
             activeItem === "categories" ? "bg-white" : "hover:bg-gray-600"
@@ -30,7 +30,7 @@ export function Sidebar({ isOpen, activeItem }: SidebarProps) {
         >
           <Image src={"/Opened Folder.png"} alt={"folder"} width={20} height={20}/>
           <span className="text-black text-sm">Categories</span>
-        </Link>
+        </Link> */}
       </div>
     </aside>
   )
