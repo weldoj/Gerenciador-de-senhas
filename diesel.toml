@@ -6,4 +6,4 @@ file = "src/schema.rs"
 custom_type_derives = ["diesel::query_builder::QueryId", "Clone"]
 
 [migrations_directory]
-dir = "/home/Gabriel/RustEstudo/backend-hash-2fa/migrations"
+dir = "/home/Gabriel/UnB/Disciplinas/dis-5ºsem/LP/trabalho-lp/Gerenciador-de-senhas/migrations"
