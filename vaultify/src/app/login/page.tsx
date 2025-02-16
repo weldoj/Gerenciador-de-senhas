@@ -72,13 +72,27 @@ export default function Login() {
         body: JSON.stringify(loginData),
       });
 
-      const data = await response.json();
+      const data = await response.text(); // 🔥 Agora pegamos a resposta como string
       console.log("🛠️ DEBUG: Resposta do login", data);
 
       if (response.ok) {
-        // 🔥 Salvar email e senha no localStorage com expiração
-        const expirationTime = Date.now() + 10 * 60 * 1000; // 1 minutos
-        localStorage.setItem("user", JSON.stringify({ email, senha, expiresAt: expirationTime }));
+        // 🔥 Extrair o `user_id` da string
+        const match = data.match(/\(ID: (\d+)\)/);
+        const userId = match && match[1] ? parseInt(match[1], 10) : null;
+
+        if (!userId) {
+          setError("Erro ao obter ID do usuário.");
+          return;
+        }
+
+        // 🔥 Salvar user_id, email e senha no localStorage com expiração
+        const expirationTime = Date.now() + 10 * 60 * 1000; // 10 minutos
+        localStorage.setItem("user", JSON.stringify({
+          user_id: userId,  // Agora o ID está extraído corretamente
+          email,
+          senha,
+          expiresAt: expirationTime
+        }));
 
         router.push("/");
       } else {
@@ -87,7 +101,8 @@ export default function Login() {
     } catch (err) {
       setError("Erro ao realizar login.");
     }
-  };
+};
+
 
 
   return (
