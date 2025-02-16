@@ -10,6 +10,14 @@ use base32::{encode, decode, Alphabet};
 use totp_rs::{TOTP, Algorithm};
 use std::time::SystemTimeError;
 
+#[options("/register")]
+pub fn options_register() {}
+
+
+#[options("/login")]
+pub fn options_login() {}
+
+
 
 fn gerar_chave_secreta() -> String {
     let mut chave = [0u8; 20];

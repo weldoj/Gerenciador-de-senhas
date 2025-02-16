@@ -27,9 +27,9 @@ export function PasswordCard({ name, logo }: PasswordCardProps) {
       <p className="text-center font-medium mb-4">{name}</p>
       {isSelected && (
         <div className="flex gap-2 mt-4">
-          <Button variant="secondary" className="flex-1 bg-[#F5DEB3] hover:bg-[#F5DEB3]/80 text-black">
+          {/* <Button variant="secondary" className="flex-1 bg-[#F5DEB3] hover:bg-[#F5DEB3]/80 text-black">
             Editar
-          </Button>
+          </Button> */}
           <Button variant="secondary" className="flex-1 bg-[#F08080] hover:bg-[#F08080]/80 text-black">
             Excluir
           </Button>
