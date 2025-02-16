@@ -14,6 +14,10 @@ use std::time::SystemTimeError;
 pub fn options_register() {}
 
 
+#[options("/login")]
+pub fn options_login() {}
+
+
 
 fn gerar_chave_secreta() -> String {
     let mut chave = [0u8; 20];
