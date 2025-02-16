@@ -14,8 +14,37 @@
 **Semestre:** 2024/2
 
 **Instituição de Ensino:** Universidade de Brasília
-***
+
+# Execução do programa:
+
+*Frontend:*
+
+```cd vaultify ```
+
+```pnpm i```
+
+```pnpm dev```
+
+*Backend:*
+
+```cargo run```
+
+```cargo test```
+
+*Banco de Dados:*
+
+```sqlite3```
+
+```.open data.db```
+
+```.tables```
+
+```SELECT * FROM "table_name"```
+
+# Informações sobre o Projeto
+
 **Wiki do projeto:**
+
 
 **Tecnologias utilizadas:** 
 ![image](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
@@ -27,6 +56,6 @@
 ![image](https://img.shields.io/badge/Sqlite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 
 **Fluxograma do Usuário:**
-![image]
+![image]()
 
 **Fluxograma do Backend:**
