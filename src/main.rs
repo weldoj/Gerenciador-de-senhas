@@ -17,7 +17,7 @@ fn rocket() -> _ {
 
     rocket::build()
         .manage(pool)
-        .mount("/api", routes![routes::register, routes::login, routes::ativar_2fa, routes::store_password, routes::retrieve_password ,routes::retrieve_password ,routes::options_register ,routes::options_login])
+        .mount("/api", routes![routes::register, routes::login, routes::ativar_2fa, routes::store_password, routes::retrieve_password ,routes::delete_password ,routes::options_register ,routes::options_login])
         .attach(CORS) // Ativa o suporte a CORS
 }
 

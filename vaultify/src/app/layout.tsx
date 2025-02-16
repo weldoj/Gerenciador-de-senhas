@@ -10,7 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     // Páginas que NÃO precisam de login
-    if (pathname === "/" || pathname === "/login") return;
+    if (pathname === "/" || pathname === "/login" || pathname === "cadastro") return;
 
     // Verificar se o usuário está logado
     const userData = localStorage.getItem("user");
@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
     if (Date.now() > expiresAt) {
       localStorage.removeItem("user"); // Expirado? Apaga os dados
-      router.push("/login"); // Redireciona para login
+      router.push("/login"); // Redireciona para login  
     }
   }, [pathname]);
 
