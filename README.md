@@ -60,3 +60,4 @@
 
 **Fluxograma do Backend:**
 ![image](https://i.postimg.cc/NjtVfzDc/user-Valtify-4-drawio.png)
+
