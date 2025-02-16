@@ -59,5 +59,5 @@
 ![image](https://i.postimg.cc/1Xz2PnrN/user-Valtify-2-drawio.png)
 
 **Fluxograma do Backend:**
-![image](https://i.postimg.cc/NjtVfzDc/user-Valtify-4-drawio.png)
+![image](https://i.postimg.cc/J4N6gQLd/user-Valtify-4-drawio.png)
 
