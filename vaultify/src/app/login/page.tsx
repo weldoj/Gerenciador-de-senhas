@@ -47,7 +47,7 @@ export default function Login() {
   };
   
 
-  // Enviar os dados de login
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -57,11 +57,10 @@ export default function Login() {
       return;
     }
 
-    // Enviar email, senha e (se houver) o código 2FA
     const loginData = {
       email: email,
       senha: senha,
-      ...(codigo2FA && { codigo_2fa: codigo2FA }), // Adiciona o código 2FA se existir
+      ...(codigo2FA && { codigo_2fa: codigo2FA }),
     };
 
     console.log("🛠️ DEBUG: Dados de login", loginData);
@@ -77,12 +76,15 @@ export default function Login() {
       console.log("🛠️ DEBUG: Resposta do login", data);
 
       if (response.ok) {
+        // 🔥 Salvar email e senha no localStorage com expiração
+        const expirationTime = Date.now() + 10 * 60 * 1000; // 1 minutos
+        localStorage.setItem("user", JSON.stringify({ email, senha, expiresAt: expirationTime }));
+
         router.push("/");
       } else {
         setError(data);
       }
     } catch (err) {
-      ;
       setError("Erro ao realizar login.");
     }
   };
