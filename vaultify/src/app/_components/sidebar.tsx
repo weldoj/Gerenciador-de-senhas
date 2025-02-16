@@ -15,7 +15,7 @@ export function Sidebar({ isOpen, activeItem }: SidebarProps) {
       <div className="p- space-y-2 w-full">
         <Link
           href="/"
-          className={`flex items-center flex-col space-x-2 w-full text-white rounded-lg ${
+          className={`flex items-center flex-col  space-x-2 w-full text-white rounded-lg ${
             activeItem === "passwords" ? "bg-white" : "hover:bg-gray-600"
           }`}
         >
