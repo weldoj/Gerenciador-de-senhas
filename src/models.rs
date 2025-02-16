@@ -61,3 +61,9 @@ pub struct NewPasswordRequest {
     pub email: String, 
     pub password: String,
 }
+
+#[derive(Deserialize)]
+pub struct DeletePasswordRequest {
+    pub username: String,
+    pub site: String,
+}
