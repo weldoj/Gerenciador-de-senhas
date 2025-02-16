@@ -1,7 +1,7 @@
 use crate::auth::{hash_senha, verificar_senha, gerar_qr_code_2fa};
 use crate::cryp::{decrypt_password, encrypt_password};
 use crate::db::DbPool;
-use crate::models::{Ativar2FARequest, LoginUser, NewPassword, NewPasswordRequest, NewUser, Password, User, DeletePasswordRequest};
+use crate::models::{Ativar2FARequest, LoginUser, NewPassword, NewPasswordRequest, NewUser, User, DeletePasswordRequest, Password};
 use diesel::prelude::*;
 use rocket::{post, get, delete, State};
 use rocket::serde::json::Json;
@@ -205,4 +205,23 @@ pub fn retrieve_password(user_id_par: i32, site_par: String, pool: &State<DbPool
 
 
    Ok(Json(decrypted_password))
+}
+
+#[get("/sites/<user_id_par>")]
+pub fn sites(
+    user_id_par: i32,
+    pool: &State<DbPool>,
+) -> Result<Json<Vec<String>>, String> {
+    let conn = &mut pool.get().map_err(|_| "Erro ao obter conexão".to_string())?;
+    
+    use crate::schema::passwords::dsl::*;
+
+    let sites = passwords
+        .filter(user_id.eq(user_id_par))
+        .select(site)
+        .distinct()
+        .load::<String>(conn)
+        .map_err(|e| format!("Erro ao buscar sites: {}", e))?;
+
+    Ok(Json(sites))
 }
