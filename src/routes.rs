@@ -17,6 +17,16 @@ pub fn options_register() {}
 #[options("/login")]
 pub fn options_login() {}
 
+#[options("/store_password")]
+pub fn options_store_password() {}
+
+#[options("/retrieve_password")]
+pub fn options_retrieve_password() {}
+
+#[options("/delete_password")]
+pub fn options_delete_password() {}
+
+
 
 
 fn gerar_chave_secreta() -> String {

@@ -10,7 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     // Páginas que NÃO precisam de login
-    if (pathname === "/" || pathname === "/login" || pathname === "cadastro") return;
+    if (pathname === "/" || pathname === "/login" || pathname === "/cadastro") return;
 
     // Verificar se o usuário está logado
     const userData = localStorage.getItem("user");

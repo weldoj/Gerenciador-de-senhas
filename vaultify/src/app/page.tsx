@@ -1,6 +1,9 @@
+"use client";
+
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { ShieldCheck, Lock, User } from "lucide-react";
+import Link from "next/link";
 
 export default function LandingPage() {
   return (
@@ -9,7 +12,7 @@ export default function LandingPage() {
       <nav className="w-full flex justify-between items-center p-6 bg-gray-800 shadow-lg">
         <div className="text-2xl font-bold text-blue-500">Vaultify</div>
         <div>
-          <Button className="bg-blue-600 hover:bg-blue-700">Login</Button>
+          <Link href="/login" className="bg-blue-600 hover:bg-blue-700 p-2 rounded-full">Login</Link>
         </div>
       </nav>
 
@@ -53,9 +56,9 @@ export default function LandingPage() {
           Crie sua conta agora mesmo e tenha total controle sobre sua segurança digital.
         </p>
         <div className="mt-6">
-          <Button className="bg-blue-600 py-4 px-6 text-lg font-semibold hover:bg-blue-700">
+          <Link href="/cadastro" className="bg-blue-600 py-4 px-6 text-lg font-semibold hover:bg-blue-700">
             Criar Conta Agora
-          </Button>
+          </Link>
         </div>
       </section>
 
