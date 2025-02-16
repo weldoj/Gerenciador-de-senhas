@@ -8,6 +8,8 @@ diesel::table! {
         email -> Text,
         encrypted_password -> Text,
         iv -> Text,
+        url -> Nullable<Text>,
+        url_image -> Nullable<Text>,
     }
 }
 

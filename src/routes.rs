@@ -12,7 +12,7 @@ use std::time::SystemTimeError;
 
 
 fn gerar_chave_secreta() -> String {
-    let mut chave = [0u8; 20];
+    let mut chave = [0u8; 20];  // Tamanho corrigido
     rand::thread_rng().fill_bytes(&mut chave);
     encode(Alphabet::RFC4648 { padding: false }, &chave)
 }
@@ -53,6 +53,7 @@ pub fn login(login_data: Json<LoginUser>, pool: &State<DbPool>) -> Result<Json<S
         .first::<User>(conn)
         .map_err(|e| format!("Erro ao buscar usuário: {}", e))?;
 
+    // 3. Verificação de senha simplificada
     if !verificar_senha(&login_data.senha, &user.senha)
         .map_err(|e| format!("Erro na verificação: {}", e))?
     {
@@ -112,38 +113,6 @@ pub fn ativar_2fa(data: Json<Ativar2FARequest>, pool: &State<DbPool>) -> Result<
     Ok(Json(format!("QR Code salvo em: {}", qr_code_path)))
 }
 
-#[delete("/delete_password", data = "<password_data>")]
-pub fn delete_password(
-    password_data: Json<DeletePasswordRequest>,
-    pool: &State<DbPool>,
-) -> Result<Json<String>, String> {
-    let conn = &mut pool.get().map_err(|_| "Erro ao obter conexão")?;
-
-    use crate::schema::users::dsl::*;
-    use crate::schema::passwords::dsl::*;
-
-    // Primeiro encontramos o user_id baseado no username
-    let user_data = users
-        .filter(username.eq(&password_data.username))
-        .first::<User>(conn)
-        .map_err(|_| "Usuário não encontrado")?;
-
-    let user_id_value = user_data.id.ok_or("Erro: user_id não encontrado")?; // Extraindo o id corretamente
-
-
-    let deleted_rows = diesel::delete(
-        passwords.filter(user_id.eq(user_id_value).and(site.eq(&password_data.site)))
-    )
-    .execute(conn)
-    .map_err(|_| "Erro ao deletar senha")?;
-
-    if deleted_rows > 0 {
-        Ok(Json("Senha deletada com sucesso".to_string()))
-    } else {
-        Err("Nenhuma senha encontrada para deletar".to_string())
-    }
-}
-
 #[post("/store_password", data = "<password_data>")]
 pub fn store_password(
     password_data: Json<NewPasswordRequest>, // Novo struct (veja abaixo)
@@ -173,6 +142,8 @@ pub fn store_password(
         user_id: password_data.user_id,
         site: password_data.site.clone(),
         email: password_data.email.clone(),
+        url:password_data.url.clone(),
+        url_image: password_data.url_image.clone(),
         encrypted_password,
         iv,
     };
@@ -205,6 +176,38 @@ pub fn retrieve_password(user_id_par: i32, site_par: String, pool: &State<DbPool
 
 
    Ok(Json(decrypted_password))
+}
+
+#[delete("/delete_password", data = "<password_data>")]
+pub fn delete_password(
+    password_data: Json<DeletePasswordRequest>,
+    pool: &State<DbPool>,
+) -> Result<Json<String>, String> {
+    let conn = &mut pool.get().map_err(|_| "Erro ao obter conexão")?;
+
+    use crate::schema::users::dsl::*;
+    use crate::schema::passwords::dsl::*;
+
+    // Primeiro encontramos o user_id baseado no username
+    let user_data = users
+        .filter(username.eq(&password_data.username))
+        .first::<User>(conn)
+        .map_err(|_| "Usuário não encontrado")?;
+
+    let user_id_value = user_data.id.ok_or("Erro: user_id não encontrado")?; // Extraindo o id corretamente
+
+
+    let deleted_rows = diesel::delete(
+        passwords.filter(user_id.eq(user_id_value).and(site.eq(&password_data.site)))
+    )
+    .execute(conn)
+    .map_err(|_| "Erro ao deletar senha")?;
+
+    if deleted_rows > 0 {
+        Ok(Json("Senha deletada com sucesso".to_string()))
+    } else {
+        Err("Nenhuma senha encontrada para deletar".to_string())
+    }
 }
 
 #[get("/sites/<user_id_par>")]
