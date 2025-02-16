@@ -1,9 +1,9 @@
 use crate::auth::{hash_senha, verificar_senha, gerar_qr_code_2fa};
 use crate::cryp::{decrypt_password, encrypt_password};
 use crate::db::DbPool;
-use crate::models::{Ativar2FARequest, LoginUser, NewPassword, NewPasswordRequest, NewUser, Password, User};
+use crate::models::{Ativar2FARequest, LoginUser, NewPassword, NewPasswordRequest, NewUser, Password, User, DeletePasswordRequest};
 use diesel::prelude::*;
-use rocket::{post, get, State};
+use rocket::{post, get, delete, State};
 use rocket::serde::json::Json;
 use rand::RngCore;
 use base32::{encode, decode, Alphabet};
@@ -110,6 +110,38 @@ pub fn ativar_2fa(data: Json<Ativar2FARequest>, pool: &State<DbPool>) -> Result<
     let qr_code_path = gerar_qr_code_2fa(&usuario.username, &chave_secreta);
 
     Ok(Json(format!("QR Code salvo em: {}", qr_code_path)))
+}
+
+#[delete("/delete_password", data = "<password_data>")]
+pub fn delete_password(
+    password_data: Json<DeletePasswordRequest>,
+    pool: &State<DbPool>,
+) -> Result<Json<String>, String> {
+    let conn = &mut pool.get().map_err(|_| "Erro ao obter conexão")?;
+
+    use crate::schema::users::dsl::*;
+    use crate::schema::passwords::dsl::*;
+
+    // Primeiro encontramos o user_id baseado no username
+    let user_data = users
+        .filter(username.eq(&password_data.username))
+        .first::<User>(conn)
+        .map_err(|_| "Usuário não encontrado")?;
+
+    let user_id_value = user_data.id.ok_or("Erro: user_id não encontrado")?; // Extraindo o id corretamente
+
+
+    let deleted_rows = diesel::delete(
+        passwords.filter(user_id.eq(user_id_value).and(site.eq(&password_data.site)))
+    )
+    .execute(conn)
+    .map_err(|_| "Erro ao deletar senha")?;
+
+    if deleted_rows > 0 {
+        Ok(Json("Senha deletada com sucesso".to_string()))
+    } else {
+        Err("Nenhuma senha encontrada para deletar".to_string())
+    }
 }
 
 #[post("/store_password", data = "<password_data>")]
