@@ -37,8 +37,18 @@ export function useRegisterUser() {
       if (!response.ok) {
         throw new Error("Erro ao registrar usuário");
       }
+      const criaQrCode = await fetch("http://127.0.0.1:8000/api/ativar-2fa", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username }),
+      });
+      console.log(criaQrCode)
 
       setSuccess(true);
+
+
     } catch (error: any) {
       setError(error.message);
     } finally {
