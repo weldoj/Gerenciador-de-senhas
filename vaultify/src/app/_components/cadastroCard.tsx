@@ -83,9 +83,9 @@ export function CadastroCard() {
   
 
   return (
-    <div>
+    <div className="">
       <Card className="w-full max-w-5xl border-transparent bg-background p-6 text-black">
-        <div className="mb-4 flex flex-col items-center">
+        <div className="mb-4 flex flex-col items-center px-32">
           <div className="flex items-center justify-center rounded-lg p-2">
             <Image
               src="/BankSafe.png"
@@ -142,7 +142,7 @@ export function CadastroCard() {
               />
               <button
                 type="button"
-                className="absolute right-3 top-10 text-gray-400"
+                className="absolute right-3 top-9 text-gray-400"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff /> : <Eye />}
@@ -161,7 +161,7 @@ export function CadastroCard() {
               />
               <button
                 type="button"
-                className="absolute right-3 top-10 text-gray-400"
+                className="absolute right-3 top-9 text-gray-400"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 {showConfirmPassword ? <EyeOff /> : <Eye />}
