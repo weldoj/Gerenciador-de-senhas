@@ -1,6 +1,7 @@
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { ShieldCheck, Lock, User } from "lucide-react";
+import Link from "next/link";
 
 export default function LandingPage() {
   return (
@@ -53,9 +54,9 @@ export default function LandingPage() {
           Crie sua conta agora mesmo e tenha total controle sobre sua segurança digital.
         </p>
         <div className="mt-6">
-          <Button className="bg-blue-600 py-4 px-6 text-lg font-semibold hover:bg-blue-700">
+          <Link className="bg-blue-600 py-4 px-6 text-lg font-semibold hover:bg-blue-700" href={"/cadastro"}>
             Criar Conta Agora
-          </Button>
+          </Link>
         </div>
       </section>
 
