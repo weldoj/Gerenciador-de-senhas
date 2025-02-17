@@ -58,6 +58,8 @@
 
 # Informações sobre o Projeto
 
+[Link do vídeo no Youtube](https://www.youtube.com/watch?v=1MVohisHQ_o)
+
 [Wiki do Projeto no Fandom](https://projetolp2024-2.fandom.com/pt-br/wiki/Projeto_LP/2024-2_Wiki)
 
 **Fluxograma do Usuário:**
