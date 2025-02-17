@@ -61,7 +61,10 @@ pub fn register(user_data: Json<NewUser>, pool: &State<DbPool>) -> Result<Json<S
 }
 
 #[post("/login", data = "<login_data>")]
-pub fn login(login_data: Json<LoginUser>, pool: &State<DbPool>) -> Result<Json<String>, String> {
+pub fn login(
+    login_data: Json<LoginUser>, 
+    pool: &State<DbPool>
+) -> Result<Json<String>, String> {
     let conn = &mut pool.get().map_err(|_| "Erro ao obter conexão".to_string())?;
 
     use crate::schema::users::dsl::*;
@@ -99,12 +102,12 @@ pub fn login(login_data: Json<LoginUser>, pool: &State<DbPool>) -> Result<Json<S
             if totp.check_current(codigo)
                 .map_err(|e: SystemTimeError| format!("Erro de tempo: {}", e))?
             {
-                Ok(Json(format!("Login bem-sucedido! Bem-vindo, {} (ID: {})", user.username, user.id.unwrap_or_default())))
+                Ok(Json(format!("Login bem-sucedido! Bem-vindo, {} ({})", user.username, user.id.unwrap_or_default())))
             } else {
                 Err("Código 2FA inválido!".to_string())
             }
         }
-        None => Ok(Json(format!("Login bem-sucedido! Bem-vindo, {} (ID: {})", user.username, user.id.unwrap_or_default()))),
+        None => Ok(Json(format!("Login bem-sucedido! Bem-vindo, {} ({})", user.username, user.id.unwrap_or_default()))),
     }
 }
 

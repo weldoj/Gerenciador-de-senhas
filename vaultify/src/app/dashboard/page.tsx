@@ -1,193 +1,28 @@
 "use client";
 
-import { Plus } from "lucide-react";
-import { Button } from "~/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import { PasswordCard } from "../_components/password-cards";
-import { AppLayout } from "../_components/layouts/app-layout";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import Navbar from "../_components/dashboard/Navbar";
+import  Card  from "~/app/_components/dashboard/Card";
 
-// export default function Home() {
-//   const router = useRouter();
-//   const [isOpen, setIsOpen] = useState(false);
-//   const [websiteName, setWebsiteName] = useState("");
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [error, setError] = useState("");
-//   // Se precisar tratar imagem, pode usar o state abaixo
-//   const [image, setImage] = useState<File | null>(null);
+export interface User {
+  userName: string;
+  nome: string;
+  senha: string;
+}
 
-//   // Ao montar, tenta carregar os dados do usuário do localStorage
-//   useEffect(() => {
-//     const storedUser = localStorage.getItem("user");
-//     if (storedUser) {
-//       const userData = JSON.parse(storedUser);
-//       setEmail(userData.email); // pré-preenche o email
-//     } else {
-//       // Se não houver usuário autenticado, redireciona para o login
-//       router.push("/login");
-//     }
-//   }, [router]);
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     setError("");
-
-//     // Verifica se todos os campos obrigatórios foram preenchidos
-//     if (!websiteName || !email || !password) {
-//       setError("Todos os campos são obrigatórios.");
-//       return;
-//     }
-
-//     // Recupera os dados do usuário armazenados no localStorage
-//     const storedUser = localStorage.getItem("user");
-//     if (!storedUser) {
-//       setError("Usuário não autenticado.");
-//       router.push("/login");
-//       return;
-//     }
-//     const userData = JSON.parse(storedUser);
-
-//     // Prepara os dados a serem enviados para a rota /store_password
-//     const passwordData = {
-//       user_id: userData.user_id,
-//       site: websiteName,
-//       email: email,
-//       password: password,
-//     };
-
-//     try {
-//       const response = await fetch("http://localhost:8000/store_password", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(passwordData),
-//       });
-
-//       if (!response.ok) {
-//         const errText = await response.text();
-//         setError(errText);
-//         return;
-//       }
-
-//       const result = await response.json();
-//       console.log("Senha armazenada com sucesso:", result);
-//       // Fecha o modal e limpa os campos
-//       setIsOpen(false);
-//       setWebsiteName("");
-//       setPassword("");
-//     } catch (error) {
-//       console.error("Erro:", error);
-//       setError("Erro ao salvar senha.");
-//     }
-//   };
-
-//   // Dados para exibir alguns cartões de senha (exemplo)
-//   interface PasswordData {
-//     name: string;
-//     logo: string;
-//   }
-
-//   const dados: PasswordData[] = [];
-
-//   return (
-//     <TooltipProvider>
-//       <AppLayout activeItem="passwords">
-//         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-//           {dados.map((item) => (
-//             <PasswordCard key={item.name} name={item.name} logo={item.logo} />
-//           ))}
-//         </div>
-//         <Tooltip>
-//           <TooltipTrigger asChild>
-//             <div>
-//               <Button
-//                 className="fixed bottom-8 right-8 h-12 w-12 rounded-full bg-white p-0 text-black hover:bg-gray-100"
-//                 onClick={() => setIsOpen(true)}
-//                 size="icon"
-//               >
-//                 <Plus className="h-6 w-6" />
-//               </Button>
-//               {isOpen && (
-//                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
-//                   <div className="w-full max-w-md rounded-lg bg-white p-8">
-//                     <h2 className="mb-4 text-2xl font-bold">
-//                       Website Information
-//                     </h2>
-//                     <form onSubmit={handleSubmit} className="space-y-4">
-//                       <div>
-//                         <Label htmlFor="websiteName">Website Name</Label>
-//                         <Input
-//                           id="websiteName"
-//                           type="text"
-//                           value={websiteName}
-//                           onChange={(e) => setWebsiteName(e.target.value)}
-//                           required
-//                         />
-//                       </div>
-//                       <div>
-//                         <Label htmlFor="email">Email</Label>
-//                         <Input
-//                           id="email"
-//                           type="email"
-//                           value={email}
-//                           onChange={(e) => setEmail(e.target.value)}
-//                           required
-//                         />
-//                       </div>
-//                       <div>
-//                         <Label htmlFor="password">Password</Label>
-//                         <Input
-//                           id="password"
-//                           type="password"
-//                           value={password}
-//                           onChange={(e) => setPassword(e.target.value)}
-//                           required
-//                         />
-//                       </div>
-//                       {error && <p className="text-red-500">{error}</p>}
-//                       <div className="flex justify-end space-x-2">
-//                         <Button
-//                           type="button"
-//                           variant="outline"
-//                           onClick={() => setIsOpen(false)}
-//                         >
-//                           Cancel
-//                         </Button>
-//                         <Button type="submit">Submit</Button>
-//                       </div>
-//                     </form>
-//                   </div>
-//                 </div>
-//               )}
-//             </div>
-//           </TooltipTrigger>
-//           <TooltipContent side="left">
-//             <p className="text-white">Adicionar nova senha</p>
-//           </TooltipContent>
-//         </Tooltip>
-//       </AppLayout>
-//     </TooltipProvider>
-//   );
-// }
-
-
+export interface User1 {
+  nome: string;
+  senha: string;
+}
 
 interface ClientData {
   user_id: number;
+  username: string;
   email: string;
   senha: string;
   expiresAt: number;
 }
+
 
 export default function AddPasswordModal() {
   const [clientData, setClientData] = useState<ClientData | null>(null);
@@ -195,6 +30,43 @@ export default function AddPasswordModal() {
   const [websiteName, setWebsiteName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    // JSON Mockado para testes locais
+    const mockUsers: User[] = [
+      {
+        userName: "joao@email.com",
+        nome: "João",
+        senha: "senha123"
+      },
+      {
+        userName: "maria@email.com",
+        nome: "Maria",
+        senha: "abc123"
+      },
+      {
+        userName: "carlos@email.com",
+        nome: "Carlos",
+        senha: "meu_segredo"
+      },
+      {
+        userName: "fernanda@email.com",
+        nome: "Fernanda",
+        senha: "pass987"
+      },
+      {
+        userName: "pedro@email.com",
+        nome: "Pedro",
+        senha: "qwerty"
+      },
+    ];
+
+    // Simulando um tempo de resposta do backend
+    setTimeout(() => {
+      return setUsers(mockUsers);
+    }, 1000);
+  }, []);
 
   // Recupera os dados do cliente do localStorage
   useEffect(() => {
@@ -255,8 +127,55 @@ export default function AddPasswordModal() {
     }
   };
 
+
+  const handleDelete = async (userName: string, nome: string) => {
+    const requestData = { username: clientData?.username, site: nome };
+
+    try {
+      const response = await fetch("http://localhost:8000/api/delete_password", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
+      });
+
+      const data = await response.text();
+      console.log("🛠️ DEBUG: Resposta do backend", data);
+
+      if (response.ok) {
+        alert("Senha deletada com sucesso!");
+
+        // 🔥 Atualiza o estado removendo o item deletado
+        setUsers((prevUsers) => prevUsers.filter(user => !(user.userName === userName && user.nome === nome)));
+
+      } else {
+        alert(`Erro: ${data}`);
+      }
+    } catch (err) {
+      alert("Erro ao deletar senha. Verifique sua conexão.");
+    }
+  };
+
   return (
     <>
+      <Navbar/>
+       <div className="p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {users.length > 0 ? (
+          users.map((user) => (
+            <Card
+              key={`${user.userName}-${user.nome}`} // Garante chave única
+              userName={clientData?.username || ""}
+              nome={user.nome}
+              senha={user.senha}
+              onDelete={handleDelete}
+            />
+          ))
+        ) : (
+          <p className="text-gray-600">Nenhuma senha salva.</p>
+        )}
+      </div>
+    </div>
+  
       {/* Botão para abrir o modal */}
       <button
         className="fixed bottom-8 right-8 h-12 w-12 rounded-full bg-white text-black hover:bg-gray-100 shadow-lg"

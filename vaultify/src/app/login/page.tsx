@@ -51,49 +51,51 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
+  
     if (!email || !senha) {
       setError("Todos os campos são obrigatórios.");
       return;
     }
-
+  
     const loginData = {
       email: email,
       senha: senha,
       ...(codigo2FA && { codigo_2fa: codigo2FA }),
     };
-
+  
     console.log("🛠️ DEBUG: Dados de login", loginData);
-
+  
     try {
       const response = await fetch("http://127.0.0.1:8000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginData),
       });
-
-      const data = await response.text(); // 🔥 Agora pegamos a resposta como string
+  
+      const data = await response.text(); // 🔥 Pegamos a resposta como string
       console.log("🛠️ DEBUG: Resposta do login", data);
-
+  
       if (response.ok) {
-        // 🔥 Extrair o `user_id` da string
-        const match = data.match(/\(ID: (\d+)\)/);
-        const userId = match && match[1] ? parseInt(match[1], 10) : null;
-
-        if (!userId) {
-          setError("Erro ao obter ID do usuário.");
+        // 🔥 Extrair o `username` e `user_id` da string
+        const match = data.match(/Bem-vindo, (.+) \((\d+)\)/);
+        const username = match && match[1] ? match[1] : null;
+        const userId = match && match[2] ? parseInt(match[2], 10) : null;
+  
+        if (!userId || !username) {
+          setError("Erro ao obter informações do usuário.");
           return;
         }
-
-        // 🔥 Salvar user_id, email e senha no localStorage com expiração
+  
+        // 🔥 Salvar user_id, username, email e senha no localStorage com expiração
         const expirationTime = Date.now() + 10 * 60 * 1000; // 10 minutos
         localStorage.setItem("user", JSON.stringify({
-          user_id: userId,  // Agora o ID está extraído corretamente
+          user_id: userId,
+          username: username,  // Agora o username também é salvo
           email,
           senha,
           expiresAt: expirationTime
         }));
-
+  
         router.push("/");
       } else {
         setError(data);
@@ -101,7 +103,8 @@ export default function Login() {
     } catch (err) {
       setError("Erro ao realizar login.");
     }
-};
+  };
+  
 
 
 
