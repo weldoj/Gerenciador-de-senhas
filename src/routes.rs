@@ -10,6 +10,24 @@ use base32::{encode, decode, Alphabet};
 use totp_rs::{TOTP, Algorithm};
 use std::time::SystemTimeError;
 
+#[options("/register")]
+pub fn options_register() {}
+
+
+#[options("/login")]
+pub fn options_login() {}
+
+#[options("/store_password")]
+pub fn options_store_password() {}
+
+#[options("/retrieve_password")]
+pub fn options_retrieve_password() {}
+
+#[options("/delete_password")]
+pub fn options_delete_password() {}
+
+
+
 
 fn gerar_chave_secreta() -> String {
     let mut chave = [0u8; 20];  // Tamanho corrigido
@@ -43,7 +61,10 @@ pub fn register(user_data: Json<NewUser>, pool: &State<DbPool>) -> Result<Json<S
 }
 
 #[post("/login", data = "<login_data>")]
-pub fn login(login_data: Json<LoginUser>, pool: &State<DbPool>) -> Result<Json<String>, String> {
+pub fn login(
+    login_data: Json<LoginUser>, 
+    pool: &State<DbPool>
+) -> Result<Json<String>, String> {
     let conn = &mut pool.get().map_err(|_| "Erro ao obter conexão".to_string())?;
 
     use crate::schema::users::dsl::*;
@@ -62,14 +83,12 @@ pub fn login(login_data: Json<LoginUser>, pool: &State<DbPool>) -> Result<Json<S
 
     match &user.chave_secreta_2fa {
         Some(chave_secreta) => {
-            
-           let decoded_secret = decode(
-            Alphabet::RFC4648 { padding: false }, 
-            chave_secreta
-        )
-        .ok_or_else(|| "Chave secreta inválida".to_string())?;
+            let decoded_secret = decode(
+                Alphabet::RFC4648 { padding: false },
+                chave_secreta
+            )
+            .ok_or_else(|| "Chave secreta inválida".to_string())?;
 
-            // 6. Criação do TOTP com parâmetros
             let totp = TOTP::new(
                 Algorithm::SHA1,
                 6,
@@ -77,22 +96,22 @@ pub fn login(login_data: Json<LoginUser>, pool: &State<DbPool>) -> Result<Json<S
                 30,
                 decoded_secret,
             ).map_err(|e| format!("Erro ao criar TOTP: {}", e))?;
-                    // 7. Verificação do código com logs
+
             let codigo = login_data.codigo_2fa.as_ref()
                 .ok_or("Código 2FA obrigatório!".to_string())?;
-
 
             if totp.check_current(codigo)
                 .map_err(|e: SystemTimeError| format!("Erro de tempo: {}", e))?
             {
-                Ok(Json(format!("Login bem-sucedido! Bem-vindo, {}", user.username)))
+                Ok(Json(format!("Login bem-sucedido! Bem-vindo, {} ({})", user.username, user.id.unwrap_or_default())))
             } else {
                 Err("Código 2FA inválido!".to_string())
             }
         }
-        None => Ok(Json(format!("Login bem-sucedido! Bem-vindo, {}", user.username))),
+        None => Ok(Json(format!("Login bem-sucedido! Bem-vindo, {} ({})", user.username, user.id.unwrap_or_default()))),
     }
 }
+
 
 #[post("/ativar-2fa", data = "<data>")]
 pub fn ativar_2fa(data: Json<Ativar2FARequest>, pool: &State<DbPool>) -> Result<Json<String>, String> {

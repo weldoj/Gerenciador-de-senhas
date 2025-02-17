@@ -47,17 +47,23 @@ pub fn gerar_qr_code_2fa(usuario: &str, chave_secreta: &str) -> String {
     let qr_code = QrCode::new(url).unwrap();
 
     // Obtendo a matriz de pixels do QR code
-    let qr_width = qr_code.width();
-    let qr_image_buffer = ImageBuffer::from_fn(qr_width as u32, qr_width as u32, |x, y| {
-        let pixel = qr_code[(x as usize, y as usize)];
-        if pixel == qrcode::Color::Dark {
-            Luma([0u8]) // Preto
-        } else {
-            Luma([255u8]) // Branco
-        }
-    });
 
-    let dir = "qrcodes/";
+    let qr_width = qr_code.width();
+    let scale = 10; // Aumenta o tamanho do QR Code (ajuste conforme necessário)
+    let qr_image_buffer = ImageBuffer::from_fn(
+        (qr_width * scale) as u32,
+        (qr_width * scale) as u32,
+        |x, y| {
+            let pixel = qr_code[((x / scale as u32) as usize, (y / scale as u32) as usize)];
+            if pixel == qrcode::Color::Dark {
+                Luma([0u8]) // Preto
+            } else {
+                Luma([255u8]) // Branco
+            }
+        },
+    );
+
+    let dir = "vaultify/public/qrCode/";
     fs::create_dir_all(dir).unwrap(); // Garante que a pasta existe
     let filename = format!("{}{}_qrcode.png", dir, usuario);
 
