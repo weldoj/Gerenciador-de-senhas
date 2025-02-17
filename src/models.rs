@@ -75,3 +75,9 @@ pub struct DeletePasswordRequest {
     pub username: String,
     pub site: String,
 }
+
+#[derive(Serialize)]
+pub struct PasswordResponse {
+    pub site: String,
+    pub senha: String,
+}

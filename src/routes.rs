@@ -1,7 +1,7 @@
 use crate::auth::{hash_senha, verificar_senha, gerar_qr_code_2fa};
 use crate::cryp::{decrypt_password, encrypt_password};
 use crate::db::DbPool;
-use crate::models::{Ativar2FARequest, LoginUser, NewPassword, NewPasswordRequest, NewUser, User, DeletePasswordRequest, Password};
+use crate::models::{Ativar2FARequest, LoginUser, NewPassword, NewPasswordRequest, NewUser, User, DeletePasswordRequest, Password, PasswordResponse};
 use diesel::prelude::*;
 use rocket::{post, get, delete, State};
 use rocket::serde::json::Json;
@@ -228,3 +228,28 @@ pub fn sites(
 
     Ok(Json(sites))
 }
+
+#[get("/get_senhas/<user_id_par>")]
+pub fn get_senhas(user_id_par: i32, pool: &State<DbPool>) -> Result<Json<Vec<PasswordResponse>>, String> {
+    use crate::schema::passwords::dsl::{passwords, user_id, site, encrypted_password, iv}; 
+    
+    let conn = &mut pool.get().map_err(|e| format!("Erro ao obter conexão: {}", e))?;
+    
+    let results = passwords
+        .filter(user_id.eq(user_id_par))
+        .select((site, encrypted_password, iv))
+        .load::<(String, String, String)>(conn) // Certifique-se de que o tipo seja correto
+        .map_err(|e| format!("Erro ao carregar senhas: {}", e))?;
+
+        let response = results.into_iter()
+        .map(|(site_str, encrypted_password_str, iv_str)| {
+            let decrypted_password = decrypt_password(&encrypted_password_str, &iv_str)
+                .map_err(|e| format!("Erro ao descriptografar: {}", e))?;
+            Ok(PasswordResponse { site: site_str, senha: decrypted_password })
+        })
+        .collect::<Result<Vec<_>, String>>()?;
+     // Certifique-se de que o collect seja de Result<Vec<_, _>>
+
+    Ok(Json(response))
+}
+
