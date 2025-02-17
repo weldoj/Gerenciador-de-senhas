@@ -51,6 +51,11 @@
 
 ```SELECT * FROM "table_name"```
 
+*Testes Unitários:*
+
+```cargo run test```
+
+
 # Informações sobre o Projeto
 
 [Wiki do Projeto no Fandom](https://projetolp2024-2.fandom.com/pt-br/wiki/Projeto_LP/2024-2_Wiki)
