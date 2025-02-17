@@ -8,7 +8,7 @@
 * Gabriel Ribeiro da Silva - 222005401
 * Laryssa de Oliveira Ferreira - 222005386
 * Weldo Gonçalves da Silva Junior - 222014133
-* Victor
+* Victor Henrique Costa - 
 * Luis Gustavo de Sousa Silva - 200046527
 
 **Semestre:** 2024/2
