@@ -32,41 +32,7 @@ export default function AddPasswordModal() {
   const [error, setError] = useState<string>("");
   const [users, setUsers] = useState<User[]>([]);
 
-  useEffect(() => {
-    // JSON Mockado para testes locais
-    const mockUsers: User[] = [
-      {
-        userName: "joao@email.com",
-        nome: "João",
-        senha: "senha123"
-      },
-      {
-        userName: "maria@email.com",
-        nome: "Maria",
-        senha: "abc123"
-      },
-      {
-        userName: "carlos@email.com",
-        nome: "Carlos",
-        senha: "meu_segredo"
-      },
-      {
-        userName: "fernanda@email.com",
-        nome: "Fernanda",
-        senha: "pass987"
-      },
-      {
-        userName: "pedro@email.com",
-        nome: "Pedro",
-        senha: "qwerty"
-      },
-    ];
-
-    // Simulando um tempo de resposta do backend
-    setTimeout(() => {
-      return setUsers(mockUsers);
-    }, 1000);
-  }, []);
+  
 
   // Recupera os dados do cliente do localStorage
   useEffect(() => {
@@ -90,32 +56,34 @@ export default function AddPasswordModal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!clientData) {
       setError("Erro: Usuário não encontrado. Faça login novamente.");
       return;
     }
-
+  
     const payload = {
       user_id: clientData.user_id,
-      site: websiteName,
-      email: clientData.email,
-      password: password,
+      site: websiteName || null, // Se vazio, envia null
+      email: clientData.email || null, // Se vazio, envia null
+      password: password || null, // Se vazio, envia null
+      url: "", // 🔥 Enviando um valor vazio
+      url_image: "", // 🔥 Enviando um valor vazio
     };
-
+  
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/store_password?=", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(payload),
-});
-
+      const response = await fetch("http://127.0.0.1:8000/api/store_password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+  
       if (!response.ok) {
         throw new Error("Erro ao salvar a senha.");
       }
-
+  
       setIsOpen(false);
       setWebsiteName("");
       setPassword("");
@@ -128,25 +96,60 @@ export default function AddPasswordModal() {
   };
 
 
-  const handleDelete = async (userName: string, nome: string) => {
-    const requestData = { username: clientData?.username, site: nome };
+  useEffect(() => {
+    const fetchUserPasswords = async () => {
+      if (!clientData || !clientData.user_id) return; // Aguarda `clientData` ser carregado
+  
+      try {
+        const response = await fetch(`http://localhost:8000/api/get_senhas/${clientData.user_id}`);
+  
+        if (!response.ok) {
+          throw new Error("Erro ao buscar senhas.");
+        }
+  
+        const data = await response.json();
+  
+        console.log("🛠️ DEBUG: Dados da API", data);
+  
+        // Converte os dados da API para o formato esperado pelo componente
+        const formattedUsers: User[] = data.map((item: { site: string; senha: string }) => ({
+          userName: clientData.email, // Usa o email do usuário logado
+          nome: item.site, // Usa o nome do site como nome do Card
+          senha: item.senha
+        }));
+  
+        setUsers(formattedUsers);
+      } catch (err) {
+        console.error("Erro ao carregar senhas:", err);
+      }
+    };
+  
+    fetchUserPasswords();
+  }, [clientData]); // 🔥 Agora, sempre que `clientData` mudar, a API será chamada
+  
+  
+  
 
+  const handleDelete = async (userName: string, nome: string) => {
+    if (!clientData) return;
+  
+    const requestData = { username: clientData.username, site: nome };
+  
     try {
       const response = await fetch("http://localhost:8000/api/delete_password", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestData),
       });
-
+  
       const data = await response.text();
       console.log("🛠️ DEBUG: Resposta do backend", data);
-
+  
       if (response.ok) {
         alert("Senha deletada com sucesso!");
-
-        // 🔥 Atualiza o estado removendo o item deletado
-        setUsers((prevUsers) => prevUsers.filter(user => !(user.userName === userName && user.nome === nome)));
-
+  
+        // 🔥 Atualiza os dados chamando a API novamente
+        
       } else {
         alert(`Erro: ${data}`);
       }
@@ -154,6 +157,7 @@ export default function AddPasswordModal() {
       alert("Erro ao deletar senha. Verifique sua conexão.");
     }
   };
+  
 
   return (
     <>
@@ -258,3 +262,4 @@ export default function AddPasswordModal() {
     </>
   );
 }
+
