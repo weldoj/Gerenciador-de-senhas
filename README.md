@@ -14,8 +14,11 @@
 **Semestre:** 2024/2
 
 **Instituição de Ensino:** Universidade de Brasília
-***
-**Wiki do projeto:**
+
+[Link do vídeo no Youtube](https://www.youtube.com/watch?v=y3688JoPnLw)
+
+[Wiki do Projeto no Fandom](https://projetolp2024-2.fandom.com/pt-br/wiki/Projeto_LP/2024-2_Wiki)
+
 
 **Tecnologias utilizadas:** 
 ![image](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
@@ -55,13 +58,6 @@
 *Testes Unitários:*
 
 ```cargo run test```
-
-
-# Informações sobre o Projeto
-
-[Link do vídeo no Youtube](https://www.youtube.com/watch?v=y3688JoPnLw)
-
-[Wiki do Projeto no Fandom](https://projetolp2024-2.fandom.com/pt-br/wiki/Projeto_LP/2024-2_Wiki)
 
 **Fluxograma do Usuário:**
 ![image](https://i.postimg.cc/1Xz2PnrN/user-Valtify-2-drawio.png)
