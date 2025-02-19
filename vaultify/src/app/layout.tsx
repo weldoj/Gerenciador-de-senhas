@@ -1,7 +1,3 @@
-"use client";
-
-import { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import "~/styles/globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -35,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }, [pathname]);
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${GeistSans.variable}`}>
       <body>{children}</body>
     </html>
   );

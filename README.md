@@ -14,7 +14,8 @@
 **Semestre:** 2024/2
 
 **Instituição de Ensino:** Universidade de Brasília
-
+***
+**Wiki do projeto:**
 
 **Tecnologias utilizadas:** 
 ![image](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)

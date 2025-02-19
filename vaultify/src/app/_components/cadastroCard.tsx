@@ -196,9 +196,9 @@ export function CadastroCard() {
             <Image 
               src={`/qrCode/${formData.username}_qrcode.png`} 
               alt="Success Image" 
-              width={200} 
+              width={2000} 
               height={300}
-              quality={1000}
+              quality={100}
                
               className="my-4 w-[250px] h-[250px] image-rendering-crisp"
             />

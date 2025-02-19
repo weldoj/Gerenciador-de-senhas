@@ -3,7 +3,7 @@ use crate::cryp::{decrypt_password, encrypt_password};
 use crate::db::DbPool;
 use crate::models::{Ativar2FARequest, LoginUser, NewPassword, NewPasswordRequest, NewUser, User, DeletePasswordRequest, Password, PasswordResponse};
 use diesel::prelude::*;
-use rocket::{post, get, delete, State};
+use rocket::{post, get, State};
 use rocket::serde::json::Json;
 use rand::RngCore;
 use base32::{encode, decode, Alphabet};
