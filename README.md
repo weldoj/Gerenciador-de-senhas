@@ -8,7 +8,7 @@
 * Gabriel Ribeiro da Silva - 222005401
 * Laryssa de Oliveira Ferreira - 222005386
 * Weldo Gonçalves da Silva Junior - 222014133
-* Victor
+* Victor Henrique Costa - 
 * Luis Gustavo de Sousa Silva - 200046527
 
 **Semestre:** 2024/2
@@ -17,4 +17,53 @@
 ***
 **Wiki do projeto:**
 
-**Tecnologias utilizadas:**
+**Tecnologias utilizadas:** 
+![image](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
+![image](https://img.shields.io/badge/next%20js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![image](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![image](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![image](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![image](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
+![image](https://img.shields.io/badge/Sqlite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+
+# Execução do programa:
+
+*Frontend:*
+
+```cd vaultify ```
+
+```pnpm i```
+
+```pnpm dev```
+
+*Backend:*
+
+```cargo run```
+
+```cargo test```
+
+*Banco de Dados:*
+
+```sqlite3```
+
+```.open data.db```
+
+```.tables```
+
+```SELECT * FROM "table_name"```
+
+*Testes Unitários:*
+
+```cargo run test```
+
+
+# Informações sobre o Projeto
+
+[Link do vídeo no Youtube](https://www.youtube.com/watch?v=y3688JoPnLw)
+
+[Wiki do Projeto no Fandom](https://projetolp2024-2.fandom.com/pt-br/wiki/Projeto_LP/2024-2_Wiki)
+
+**Fluxograma do Usuário:**
+![image](https://i.postimg.cc/1Xz2PnrN/user-Valtify-2-drawio.png)
+
+

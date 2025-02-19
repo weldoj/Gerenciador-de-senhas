@@ -1,170 +1,265 @@
 "use client";
 
-import { Plus } from "lucide-react";
-import { Button } from "~/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import { PasswordCard } from "../_components/password-cards";
-import { AppLayout } from "../_components/layouts/app-layout";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Navbar from "../_components/dashboard/Navbar";
+import  Card  from "~/app/_components/dashboard/Card";
 
-export default function Home() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [websiteName, setWebsiteName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [image, setImage] = useState<File | null>(null);
+export interface User {
+  userName: string;
+  nome: string;
+  senha: string;
+}
 
-  const handleSubmit = (e: React.FormEvent) => {
+export interface User1 {
+  nome: string;
+  senha: string;
+}
+
+interface ClientData {
+  user_id: number;
+  username: string;
+  email: string;
+  senha: string;
+  expiresAt: number;
+}
+
+
+export default function AddPasswordModal() {
+  const [clientData, setClientData] = useState<ClientData | null>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [websiteName, setWebsiteName] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [users, setUsers] = useState<User[]>([]);
+
+  
+
+  // Recupera os dados do cliente do localStorage
+  useEffect(() => {
+    const storedData = localStorage.getItem("user");
+
+    if (storedData) {
+      const parsedData: ClientData = JSON.parse(storedData);
+      // Verifica se o token expirou
+      if (Date.now() < parsedData.expiresAt) {
+        setClientData(parsedData);
+      } else {
+        console.warn("Sessão expirada. Faça login novamente.");
+        localStorage.removeItem("user"); // Remove os dados expirados
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("Dados do cliente atualizados:", clientData);
+  }, [clientData]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log({ websiteName, email, password, image });
-    setIsOpen(false);
-  };
-
-  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files[0]) {
-  //     setImage(e.target.files[0]);
-  //   }
-  // };
-
-  const dados = [
-    {
-      name: "Linkedin",
-      logo: "/linkedin.avif",
-    },
-    {
-      name: "X",
-      logo: "/twitter.webp",
-    },
-    {
-      name: "Netflix",
-      logo: "/netflix.png",
-    },
-  ];
-  const handleAddPassword = async () => {
+  
+    if (!clientData) {
+      setError("Erro: Usuário não encontrado. Faça login novamente.");
+      return;
+    }
+  
+    const payload = {
+      user_id: clientData.user_id,
+      site: websiteName || null, // Se vazio, envia null
+      email: clientData.email || null, // Se vazio, envia null
+      password: password || null, // Se vazio, envia null
+      url: "", // 🔥 Enviando um valor vazio
+      url_image: "", // 🔥 Enviando um valor vazio
+    };
+  
     try {
-      const response = await fetch("http://localhost:8000/store_password", {
+      const response = await fetch("http://127.0.0.1:8000/api/store_password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          site: "nomdeDoSite", // Nome do site
-          email: "usuario@email.com", // E-mail do usuário
-          password: "minhaSenha123", // Senha que será criptografada no backend
-        }),
+        body: JSON.stringify(payload),
       });
-
+  
       if (!response.ok) {
-        throw new Error("Erro ao adicionar senha");
+        throw new Error("Erro ao salvar a senha.");
       }
-
-      const result = await response.json();
-      console.log(result); // Mensagem de sucesso do backend
-    } catch (error) {
-      console.error("Erro:", error);
+  
+      setIsOpen(false);
+      setWebsiteName("");
+      setPassword("");
+      setError("");
+      alert("Senha salva com sucesso! ✅");
+    } catch (err) {
+      console.error("Erro ao conectar ao servidor:", err);
+      setError("Erro ao conectar ao servidor.");
     }
   };
 
+
+  useEffect(() => {
+    const fetchUserPasswords = async () => {
+      if (!clientData || !clientData.user_id) return; // Aguarda `clientData` ser carregado
+  
+      try {
+        const response = await fetch(`http://localhost:8000/api/get_senhas/${clientData.user_id}`);
+  
+        if (!response.ok) {
+          throw new Error("Erro ao buscar senhas.");
+        }
+  
+        const data = await response.json();
+  
+        console.log("🛠️ DEBUG: Dados da API", data);
+  
+        // Converte os dados da API para o formato esperado pelo componente
+        const formattedUsers: User[] = data.map((item: { site: string; senha: string }) => ({
+          userName: clientData.email, // Usa o email do usuário logado
+          nome: item.site, // Usa o nome do site como nome do Card
+          senha: item.senha
+        }));
+  
+        setUsers(formattedUsers);
+      } catch (err) {
+        console.error("Erro ao carregar senhas:", err);
+      }
+    };
+  
+    fetchUserPasswords();
+  }, [clientData]); // 🔥 Agora, sempre que `clientData` mudar, a API será chamada
+  
+  
+  
+
+  const handleDelete = async (userName: string, nome: string) => {
+    if (!clientData) return;
+  
+    const requestData = { username: clientData.username, site: nome };
+  
+    try {
+      const response = await fetch("http://localhost:8000/api/delete_password", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
+      });
+  
+      const data = await response.text();
+      console.log("🛠️ DEBUG: Resposta do backend", data);
+  
+      if (response.ok) {
+        alert("Senha deletada com sucesso!");
+  
+        // 🔥 Atualiza os dados chamando a API novamente
+        
+      } else {
+        alert(`Erro: ${data}`);
+      }
+    } catch (err) {
+      alert("Erro ao deletar senha. Verifique sua conexão.");
+    }
+  };
+  
+
   return (
-    <TooltipProvider>
-      <AppLayout activeItem="passwords">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {dados.map((password) => (
-            <PasswordCard
-              key={password.name}
-              name={password.name}
-              logo={password.logo}
+    <>
+      <Navbar/>
+       <div className="p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {users.length > 0 ? (
+          users.map((user) => (
+            <Card
+              key={`${user.userName}-${user.nome}`} // Garante chave única
+              userName={clientData?.username || ""}
+              nome={user.nome}
+              senha={user.senha}
+              onDelete={handleDelete}
             />
-          ))}
-        </div>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div>
-              <Button
-                className="fixed bottom-8 right-8 h-12 w-12 rounded-full bg-white p-0 text-black hover:bg-gray-100"
-                onClick={() => setIsOpen(true)}
-                size="icon"
+          ))
+        ) : (
+          <p className="text-gray-600">Nenhuma senha salva.</p>
+        )}
+      </div>
+    </div>
+  
+      {/* Botão para abrir o modal */}
+      <button
+        className="fixed bottom-8 right-8 h-12 w-12 rounded-full bg-white text-black hover:bg-gray-100 shadow-lg"
+        onClick={() => setIsOpen(true)}
+      >
+        +
+      </button>
 
-              >
-              <Plus className="h-6 w-6" />
-              </Button>
+      {/* Modal */}
+      {isOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+            <h2 className="mb-4 text-2xl font-bold">Adicionar Nova Senha</h2>
 
-              {isOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
-                  <div className="w-full max-w-md rounded-lg bg-white p-8">
-                    <h2 className="mb-4 text-2xl font-bold">
-                      Website Information
-                    </h2>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                      <div>
-                        <Label htmlFor="websiteName">Website Name</Label>
-                        <Input
-                          id="websiteName"
-                          type="text"
-                          value={websiteName}
-                          onChange={(e) => setWebsiteName(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="password">Password</Label>
-                        <Input
-                          id="password"
-                          type="password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          required
-                        />
-                      </div>
-                      {/* <div>
-                        <Label htmlFor="image">Image</Label>
-                        <Input
-                          id="image"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageChange}
-                          required
-                        />
-                      </div> */}
-                      <div className="flex justify-end space-x-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button type="submit">Submit</Button>
-                      </div>
-                    </form>
-                  </div>
+            {/* Verifica se os dados do cliente existem antes de exibir o formulário */}
+            {clientData ? (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label htmlFor="websiteName" className="block text-sm font-medium">
+                    Nome do Site
+                  </label>
+                  <input
+                    id="websiteName"
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded"
+                    value={websiteName}
+                    onChange={(e) => setWebsiteName(e.target.value)}
+                    required
+                  />
                 </div>
-              )}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent side="left">
-            <p className="text-white">Adicionar nova senha</p>
-          </TooltipContent>
-        </Tooltip>
-      </AppLayout>
-    </TooltipProvider>
+
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium">
+                    Email (usado para login)
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    className="w-full p-2 border border-gray-300 rounded bg-gray-100"
+                    value={clientData?.email || ""}
+                    disabled
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium">
+                    Senha do Site
+                  </label>
+                  <input
+                    id="password"
+                    type="password"
+                    className="w-full p-2 border border-gray-300 rounded"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+
+                {error && <p className="text-red-500">{error}</p>}
+
+                <div className="flex justify-end space-x-2">
+                  <button
+                    type="button"
+                    className="px-4 py-2 border rounded text-gray-700"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Cancelar
+                  </button>
+                  <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">
+                    Salvar
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <p className="text-red-500">⚠ Sessão expirada. Faça login novamente.</p>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
+
